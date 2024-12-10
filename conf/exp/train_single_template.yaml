@@ -1,0 +1,12 @@
+sub: 1
+bottlenecks: ???
+reg:
+    batch_size: 128
+    device: 'cuda'
+    n_epochs: 100
+    lr: ???
+    model: 'linear'
+    optim: ???
+    save_checkpoints: False
+    weight_decay: ???
+    objective_weights: ???
