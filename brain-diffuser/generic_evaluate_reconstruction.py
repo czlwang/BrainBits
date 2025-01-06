@@ -59,7 +59,7 @@ def evaluate_reconstructions(image_dir, feats_dir, out_file_path):
         ]
 
     results = {}
-    root_path = "/storage/czw/BrainBitsWIP/"
+    root_path = "."
     test_dir = os.path.join(root_path, f'data/eval_features/test_images')
     num_test = 982
     distance_fn = sp.spatial.distance.correlation
@@ -95,7 +95,7 @@ def evaluate_reconstructions(image_dir, feats_dir, out_file_path):
     pixcorr_list = []
     for i in range(982):
         gen_image = Image.open(os.path.join(image_dir, f'{i}.png')).resize((425,425))
-        gt_image = Image.open(f'/storage/czw/BrainBitsWIP/data/nsddata_stimuli/test_images/{i}.png')
+        gt_image = Image.open(f'./data/nsddata_stimuli/test_images/{i}.png')
         gen_image = np.array(gen_image)/255.0
         gt_image = np.array(gt_image)/255.0
         pixcorr_res = np.corrcoef(gt_image.reshape(1,-1), gen_image.reshape(1,-1))[0,1]

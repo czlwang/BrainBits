@@ -13,7 +13,7 @@ First, we need to learn the mappings to VDVAE, CLIP text, and CLIP vision latent
 ```
 BOTTLENECK=50; SUB=1; CUDA_VISIBLE_DEVICES=1 python train_single.py \
 +exp=train_single_template ++exp.bottlenecks=[${BOTTLENECK}] ++exp.reg.batch_size=128 \
-++exp.reg.n_epochs=1 ++exp.reg.optim="Adam" ++exp.reg.lr=0.01 ++exp.sub=${SUB} \
+++exp.reg.n_epochs=${N_EPOCHS} ++exp.reg.optim="Adam" ++exp.reg.lr=0.01 ++exp.sub=${SUB} \
 ++exp.reg.save_checkpoints=False ++exp.reg.weight_decay=0.1 \
 '++exp.reg.objective_weights=[1,2,4]' hydra.job.chdir=False \
 ++exp.out_dir=debug_bottleneck_${BOTTLENECK}_sub_${SUB}
@@ -56,7 +56,28 @@ BOTTLENECK=50; SUB=1; CUDA_VISIBLE_DEVICES=0,1 python generic_evaluate_reconstru
 
 # Tang et al 2023 case study
 
-Coming soon!
+Follow the pre-requisite instructions from [here](https://github.com/HuthLab/semantic-decoding). In particular, make sure the `data_lm/`, `data_train/`, and `data_test/' directories are downloaded under the `semantic-decoding` directory.
+
+Learn compressed versions of the language model embeddings:
+```
+SUBJECT=S1; DIM=1000; python3 decoding/learn_compression +data_exp=learn_compression \
+++data_exp.in_dir=orig ++data_exp.subject=${SUBJECT} ++data_exp.n_components=${DIM} \
+++reg.batch_size=512 ++reg.optim="Adam" ++reg.lr=0.0005 ++reg.n_epochs=${N_EPOCHS} \
+++reg.device="cuda" ++data_exp.out_path=/storage/czw/semantic-decoding-brainbits/compression_models_debug \
+++reg.use_iterative=False ++reg.pca_preload=False
+```
+
+Follow the Tang et al pipeline for training the encoding and word models.
+```
+SUBJECT=S1; DIM=1000; python3 decoding/train_EM.py --subject ${SUBJECT} --gpt imagined --data_version=bbits_${DIM}
+SUBJECT=S1; DIM=1000; python3 decoding/train_EM.py --subject ${SUBJECT} --gpt perceived --data_version=bbits_${DIM}
+SUBJECT=S1; python3 decoding/train_WR.py --subject ${SUBJECT}  
+```
+
+Now, evaluate
+```
+SUBJECT=S1; DIM=1000; python3 all_decoding.py ${SUBJECT} bbits_${DIM}
+```
 
 # Takagi et al 2023 case study
 

@@ -58,7 +58,7 @@ def extract_eval(images_dir=None, feats_dir=None):
         feat_list.append(outputs.cpu().numpy())
 
     if images_dir is None and feats_dir is None:
-        root_path = "/storage/czw/BrainBitsWIP/"
+        root_path = "."
         images_dir = os.path.join(root_path, 'data/nsddata_stimuli/test_images') #created by save_test_images
         feats_dir = os.path.join(root_path, 'data/eval_features/test_images') #out dir
 
@@ -102,7 +102,7 @@ def extract_eval(images_dir=None, feats_dir=None):
                 net.classifier[5].register_forward_hook(fn)
                 
         elif net_name == 'clip':
-            model, _ = clip.load("ViT-L/14", device='cuda:{}'.format(device), download_root="/storage/czw/.cache")
+            model, _ = clip.load("ViT-L/14", device='cuda:{}'.format(device), download_root=".cache") #Make sure that .cache exists
             net = model.visual
             net = net.to(torch.float32)
             if layer==7:
